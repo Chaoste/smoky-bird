@@ -16,11 +16,6 @@ export const registerEventHandlers = (connection, ) => {
   connection.on('disconnect', (reason) => {
     console.error('WebSocket Error ' + reason);
   });
-
-  // Log messages from the server
-  // connection.onmessage = function (e) {
-  //   console.debug('Server: ' + e.data);
-  // };
 };
 
 export const send = (connection, msg) => {
@@ -31,7 +26,7 @@ export const send = (connection, msg) => {
 export const calibrate = (signals: Array<number>): Object => {
   const mean = mathUtils.calcMean(signals);
   const vari = mathUtils.calcVariance(signals);
-  console.info(`After ${signals.length} signals: mean=${mean}, var=${vari}`);
+  console.debug(`After ${signals.length} signals: mean=${mean}, var=${vari}`);
   return {
     calibration: {
       amount: signals.length,

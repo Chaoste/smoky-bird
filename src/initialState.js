@@ -25,7 +25,7 @@ export default {
         height: 188,
         force: 0,
         originalHeight: 188,
-        flyHeight: 200 * factor,  // pc, height per second if force equals 1
+        flyHeight: 200 * factor,  // px, height per second if force equals 1
         dropTime: 1400 / (factor / 1.5),  // ms for dropping from top to bottom
         timestamp: 0,
     },

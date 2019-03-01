@@ -7,6 +7,8 @@ import throttle from 'lodash/throttle';
 import * as socketUtils from './utils/socket.js';
 import * as mathUtils from './utils/math.js';
 
+import tilmanPutzt from  './images/tilman_seamless.mp4';
+
 const URI = '192.168.178.118:80';
 const SIGNAL_WINDOW_SIZE = 50;
 
@@ -24,6 +26,7 @@ export default class App extends React.Component {
       variance: 0,
     }
   }
+  refAudio = React.createRef();
 
   componentWillMount() {
     if (USE_SOCKET) {
@@ -82,6 +85,14 @@ export default class App extends React.Component {
     }
   }, 30)
 
+  componentWillReceiveProps(newProps) {
+    if (this.props.state.game.status !== 'over' &&
+      newProps.state.game.status === 'over') {
+        console.log('PLAY')
+        this.refAudio.current.play();
+    }
+  }
+
   render() {
     const { state, actions, record } = this.props;
     const { bird, pipings, game, player } = state
@@ -89,7 +100,13 @@ export default class App extends React.Component {
     const recordState = record.getRecord()
     const { isRecording, history } = recordState
     const isPlaying = game.status === 'playing'
-    const onFlyUp = isPlaying && !isRecording && (() => FLY_UP())
+    const onMouseDown = () => {
+      if (isPlaying && !isRecording) {
+        FLY_UP()
+      } else if (isRecording) {
+        record.stop();
+      }
+    }
     const onFlyUpEnd = isPlaying && !isRecording && (() => FLY_UP_END())
     const onReplay = history.length > 0 && record.replay
     const landClasses = classnames({
@@ -99,7 +116,11 @@ export default class App extends React.Component {
     return (
       <div className="game">
         <div className="title title-1">Smoky</div>
-        <div className="scene" onMouseDown={onFlyUp} onMouseUp={onFlyUpEnd} onTouchStart={onFlyUp} onTouchEnd={onFlyUpEnd}>
+        <div className="scene" onMouseDown={onMouseDown} onMouseUp={onFlyUpEnd} onTouchStart={onMouseDown} onTouchEnd={onFlyUpEnd}>
+          <video autoPlay loop>
+            <source src={tilmanPutzt} type="video/mp4"/>
+            Your browser does not support the video tag.
+          </video>
             { isPlaying &&
               <div className="score">{player.score}</div>
             }
@@ -108,9 +129,13 @@ export default class App extends React.Component {
               pipings.list.map(piping => <Piping key={piping.timestamp} {...piping} />)
             }
             <div className={landClasses} />
-            { game.status === 'over' &&
+            { game.status === 'over' && (
               <Menu score={player.score} onPlay={START_PLAY} onReplay={onReplay} onReverse={record.reverse} />
-            }
+            )}
+            <audio controls ref={this.refAudio}>
+              <source src='https://lapipe.de/files/fawaz_voice.mp3' type="audio/mpeg"/>
+            </audio>
+
         </div>
         <div className="title title-2">Burrd</div>
       </div>
