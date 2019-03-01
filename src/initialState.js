@@ -26,7 +26,7 @@ export default {
         force: 0,
         originalHeight: 188,
         flyHeight: 200 * factor,  // pc, height per second if force equals 1
-        dropTime: 1400 / (factor / 1.3),  // ms for dropping from top to bottom
+        dropTime: 1400 / (factor / 1.5),  // ms for dropping from top to bottom
         timestamp: 0,
     },
     pipings: {

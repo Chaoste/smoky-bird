@@ -1,0 +1,16 @@
+{
+  "name": "hookah-socket",
+  "version": "1.0.0",
+  "description": "Send socket messages to smoky burrd",
+  "main": "index.js",
+  "author": "Die Shisha Life Guys",
+  "license": "MIT",
+  "scripts": {
+    "start": "supervisor node index.js"
+  },
+  "dependencies": {
+    "express": "^4.16.4",
+    "socket.io": "^2.2.0",
+    "supervisor": "^0.12.0"
+  }
+}
