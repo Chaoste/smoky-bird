@@ -23,9 +23,29 @@ body {
 	margin: 0 auto;
 }
 
+.title {
+  position: absolute;
+	opacity: 0.5;
+  top: 190px;
+  left: 50%;
+  z-index: -1;
+	font-family: fantasy;
+	font-size: 60px;
+	color: lightgray;
+	text-shadow: 5px 5px 7px darkgrey;
+}
+
+.title-1 {
+  margin-left: -350px;
+}
+
+.title-2 {
+  margin-left: 190px;
+}
+
 .scene {
 	position: absolute;
-	top: 0;
+	top: 20px;
 	left: 0;
 	width: 100%;
 	height: 100%;
@@ -38,12 +58,20 @@ body {
 	position: absolute;
 	bottom: 112px;
 	left: 50%;
-	width: 34px;
-	height: 24px;
+	width: 42px;
+	height: 36px;
 	margin-left:  -12px;
-	background: url(../images/elements.png) no-repeat -446px -248px;
+	background: url(../images/elements.png) no-repeat -446px -238px;
 	transition: transform 0.1s ease;
 	will-change:  transform;
+}
+
+.up {
+	background-position: -446px -238px;
+}
+
+.down {
+	background-position: -528px -118px;
 }
 
 .flying {
@@ -52,13 +80,13 @@ body {
 
 @keyframes fly {
 	0% {
-		background-position: -528px -128px;
+		background-position: -528px -118px;
 	}
 	33% {
-		background-position: -528px -180px;
+		background-position: -528px -170px;
 	}
 	66% {
-		background-position: -446px -248px;
+		background-position: -446px -238px;
 	}
 }
 
@@ -146,4 +174,3 @@ body {
 	font-size: 14px;
 	z-index: 10;
 }
-

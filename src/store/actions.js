@@ -13,21 +13,17 @@ export let START_PLAY = (state) => {
     return FLY_UP(nextState)
 }
 
-export let FLY_UP = (state) => {
+export let FLY_UP = (state, force) => {
+    // TODO: Remove, user can't pull if at the top
     if (state.bird.height >= state.game.range.max) {
         return state
     }
 
     let bird = {...state.bird }
     bird.status = 'up'
+    bird.force = force !== undefined ? force : 1
     bird.originalHeight = bird.height
-    bird.targetHeight = bird.height + bird.flyHeight
     bird.timestamp = Date.now()
-
-    let { range } = state.game
-    if (bird.targetHeight > range.max) {
-        bird.targetHeight = range.max
-    }
 
     return {
         ...state,
@@ -46,37 +42,29 @@ export let PLAYING = (state) => {
     return nextState
 }
 
+export const FLY_UP_END = (state) => {
+  let bird = {...state.bird }
+  bird.status = 'down'
+  bird.force = 0
+  bird.originalHeight = bird.height
+  bird.timestamp = Date.now()
 
-function dropDown(state) {
-    let bird = {...state.bird }
-    bird.status = 'down'
-    bird.originalHeight = bird.height
-    bird.targetHeight = state.game.range.min
-    bird.timestamp = Date.now()
-    return {
-        ...state,
-        bird,
-    }
+  return {
+      ...state,
+      bird,
+  }
 }
 
 function flying(state) {
     let bird = {...state.bird }
-    if (bird.height === bird.targetHeight) {
-        return dropDown(state)
-    }
 
-    let { timestamp, flyTime, dropTime } = bird
+    let { timestamp, dropTime, force } = bird
     let time = Date.now() - timestamp
 
-    if (bird.height < bird.targetHeight) {
-        let ratio = time / flyTime
-        if (ratio > 1) {
-            ratio = 1
-        }
-        bird.height = bird.originalHeight + (bird.targetHeight - bird.originalHeight) * ratio
+    if (bird.status === 'up') {
+        bird.height = bird.originalHeight + bird.flyHeight * force * time / 1000
     } else {
         let shift = time * (state.game.range.max - state.game.range.min) / dropTime
-
         bird.height = bird.originalHeight - shift
     }
 

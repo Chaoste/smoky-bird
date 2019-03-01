@@ -8,7 +8,9 @@ export default function Bird(props) {
     }
     let classes = classnames({
     	'bird': true,
-    	'flying': isFlying,
+    	// 'flying': isFlying,
+			'up': status === 'up',
+			'down': status === 'down'
     })
 	return (
 		<div className={classes} style={style}></div>

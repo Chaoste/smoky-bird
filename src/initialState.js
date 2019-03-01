@@ -1,3 +1,6 @@
+const difficulty = 2;  // orig = 4
+const factor = difficulty / 4;
+
 export default {
     game: {
         status: 'over',
@@ -15,22 +18,21 @@ export default {
     },
     bird: {
         size: {
-            width: 34,
-            height: 24,
+            width: 36,
+            height: 40,  // Also replace in index.css:42, 55, 58, 61 (greater to show the full image)
         },
         status: 'normal',
         height: 188,
-        targetHeight: 188,
+        force: 0,
         originalHeight: 188,
-        flyHeight: 60,
-        flyTime: 140,
-        dropTime: 1400,
+        flyHeight: 200 * factor,  // pc, height per second if force equals 1
+        dropTime: 1400 / (factor / 1.3),  // ms for dropping from top to bottom
         timestamp: 0,
     },
     pipings: {
         timestamp: 0,
-        interval: 1600,
-        speed: 2800,
+        interval: 1600 / factor,
+        speed: 2800 / factor,
         size: {
             width: 52,
         },

@@ -1,8 +1,8 @@
 {
-  "name": "flappy-bird",
+  "name": "smocky-bird",
   "version": "1.0.0",
   "private": true,
-  "homepage": "/flappy-bird",
+  "homepage": "/smocky-bird",
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-gh-pages": "^0.5.4",

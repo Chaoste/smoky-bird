@@ -12,7 +12,10 @@ let state = {
 	...initialState,
 }
 
-let store = createStore(state)
+let store = createStore(
+	state,
+	window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+)
 
 function renderToDOM(state) {
 	return ReactDOM.render(
