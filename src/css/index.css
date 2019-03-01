@@ -54,6 +54,16 @@ body {
 	background: url(../images/elements.png) no-repeat;
 }
 
+.scene audio {
+	position: fixed;
+	z-index: 100;
+	top: 20px;
+}
+
+.scene video{
+	width: 100%;
+}
+
 .bird {
 	position: absolute;
 	bottom: 112px;

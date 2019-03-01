@@ -3,6 +3,7 @@ function getInitialRecord() {
     return {
         history: [],
         isRecording: false,
+        shouldStop: false,
     }
 }
 
@@ -15,6 +16,10 @@ export function getRecord() {
 
 export function start() {
     record = getInitialRecord()
+}
+
+export function stop() {
+    record.shouldStop = true
 }
 
 export function setRender(renderFunction) {
@@ -36,7 +41,8 @@ export function replay() {
     let { history } = record
     let count = 0
     let read = () => {
-        if (count >= history.length) {
+        if (record.shouldStop || count >= history.length) {
+            record.shouldStop = false;
             return
         }
         render(history[count])
@@ -50,7 +56,8 @@ export function reverse() {
     let { history } = record
     let count = 0
     let read = () => {
-        if (count >= history.length) {
+        if (record.shouldStop || count >= history.length) {
+            record.shouldStop = false;
             render(history[history.length - 1])
             return
         }
