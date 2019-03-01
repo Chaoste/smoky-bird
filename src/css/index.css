@@ -55,9 +55,10 @@ body {
 }
 
 .scene audio {
-	position: fixed;
+	visibility: hidden;
+	/* position: fixed;
 	z-index: 100;
-	top: 20px;
+	top: 20px; */
 }
 
 .scene video{

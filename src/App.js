@@ -14,7 +14,7 @@ const SIGNAL_WINDOW_SIZE = 50;
 
 const MAX_VAL = 50;
 const USE_SOCKET = true;
-const MIN_PRESSURE_RATIO = 0.06; // 10% of max required to trigger FLY_UP
+const MIN_PRESSURE_RATIO = 0.15; // 10% of max required to trigger FLY_UP
 
 export default class App extends React.Component {
   connection = undefined;
@@ -32,7 +32,7 @@ export default class App extends React.Component {
     if (USE_SOCKET) {
       this.connection = socketUtils.setup(URI);
       this.connection.onopen = () => {
-        console.log('Hello')
+        console.log('WS connected')
         this.connection.send('PENIS'); // Send the message 'Ping' to the server
       };
       this.connection.onerror = (err) => {
