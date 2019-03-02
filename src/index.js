@@ -1,23 +1,22 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import Fastclick from 'fastclick'
 import App from './App'
 import createStore from './store'
 import initialState from './initialState'
 import * as record from './record'
 import './css/index.css'
 
-let state = {
+const state = {
 	initialState: {...initialState},
 	...initialState,
 }
 
-let store = createStore(
+const store = createStore(
 	state,
 	window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 )
 
-function renderToDOM(state) {
+const renderToDOM = (state) => {
 	return ReactDOM.render(
 	  <App state={state || store.getState()} actions={store.actions} record={record} />,
 	  document.getElementById('root')
@@ -27,23 +26,19 @@ function renderToDOM(state) {
 record.setRender(renderToDOM)
 
 store.subscribe(data => {
-	let { actionType, currentState } = data
+	const { actionType, currentState } = data
 
 	if (actionType === 'START_PLAY') {
 		record.start()
 		record.save(currentState.initialState)
 		playing()
-		return
-	}
-
-	if (actionType === 'PLAYING' || actionType === 'FLY_UP') {
+	} else if (actionType === 'PLAYING' || actionType === 'FLY_UP') {
 		record.save(currentState)
 		renderToDOM()
 		if (currentState.game.status === 'over') {
 			record.finish()
 			stopPlaying()
 		}
-		return
 	}
 })
 
@@ -58,7 +53,3 @@ function stopPlaying() {
 }
 
 renderToDOM()
-
-if ('ontouchstart' in document) {
-	Fastclick.attach(document.body)
-}

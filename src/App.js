@@ -1,5 +1,4 @@
 import React from 'react'
-import classnames from 'classnames'
 import Bird from './components/Bird'
 import Piping from './components/Piping'
 import Menu from './components/Menu'
@@ -109,10 +108,6 @@ export default class App extends React.Component {
     }
     const onFlyUpEnd = isPlaying && !isRecording && (() => FLY_UP_END())
     const onReplay = history.length > 0 && record.replay
-    const landClasses = classnames({
-      land: true,
-      sliding: isPlaying,
-    })
     return (
       <div className="game">
         <div className="title title-1">Smoky</div>
@@ -128,7 +123,7 @@ export default class App extends React.Component {
             {
               pipings.list.map(piping => <Piping key={piping.timestamp} {...piping} />)
             }
-            <div className={landClasses} />
+            <div className={`land ${isPlaying ? 'sliding' : ''}`} />
             { game.status === 'over' && (
               <Menu score={player.score} onPlay={START_PLAY} onReplay={onReplay} onReverse={record.reverse} />
             )}

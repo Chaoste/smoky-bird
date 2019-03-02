@@ -4,13 +4,10 @@
   "private": true,
   "homepage": "/smocky-bird",
   "devDependencies": {
-    "gulp": "^3.9.1",
-    "gulp-gh-pages": "^0.5.4",
     "react-scripts": "0.2.1"
   },
   "dependencies": {
     "classnames": "^2.2.5",
-    "fastclick": "^1.0.6",
     "react": "^16.8.3",
     "react-dom": "^16.8.3",
     "relite": "^1.0.0"
@@ -22,6 +19,9 @@
     "deploy": "npm run build && gulp deploy"
   },
   "eslintConfig": {
-    "extends": "./node_modules/react-scripts/config/eslint.js"
+    "extends": "./node_modules/react-scripts/config/eslint.js",
+    "rules": {
+      "new-cap": 0
+    }
   }
 }
