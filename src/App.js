@@ -1,3 +1,4 @@
+/* eslint-disable new-cap */
 import React from 'react'
 import Bird from './components/Bird'
 import Piping from './components/Piping'
@@ -31,7 +32,7 @@ export default class App extends React.Component {
     if (USE_SOCKET) {
       this.connection = socketUtils.setup(URI);
       this.connection.onopen = () => {
-        console.log('WS connected')
+        console.info('WebSocket connected')
         this.connection.send('PENIS'); // Send the message 'Ping' to the server
       };
       this.connection.onerror = (err) => {
@@ -87,31 +88,43 @@ export default class App extends React.Component {
   componentWillReceiveProps(newProps) {
     if (this.props.state.game.status !== 'over' &&
       newProps.state.game.status === 'over') {
-        console.log('PLAY')
         this.refAudio.current.play();
+    }
+  }
+
+  onMouseUp = () => {
+    const { state, actions, record } = this.props
+    const { isRecording } = record.getRecord()
+    const isPlaying = state.game.status === 'playing'
+    const { FLY_UP_END } = actions
+    if (isPlaying && !isRecording) {
+      FLY_UP_END();
+    }
+  }
+
+  onMouseDown = () => {
+    const { state, actions, record } = this.props;
+    const { FLY_UP } = actions
+    const { isRecording } = record.getRecord()
+    const isPlaying = state.game.status === 'playing'
+    if (isPlaying && !isRecording) {
+      FLY_UP()
+    } else if (isRecording) {
+      record.stop();
     }
   }
 
   render() {
     const { state, actions, record } = this.props;
     const { bird, pipings, game, player } = state
-    const { FLY_UP, FLY_UP_END, START_PLAY } = actions
+    const { START_PLAY } = actions
     const recordState = record.getRecord()
-    const { isRecording, history } = recordState
     const isPlaying = game.status === 'playing'
-    const onMouseDown = () => {
-      if (isPlaying && !isRecording) {
-        FLY_UP()
-      } else if (isRecording) {
-        record.stop();
-      }
-    }
-    const onFlyUpEnd = isPlaying && !isRecording && (() => FLY_UP_END())
-    const onReplay = history.length > 0 && record.replay
+    const onReplay = recordState.history.length > 0 && record.replay
     return (
       <div className="game">
         <div className="title title-1">Smoky</div>
-        <div className="scene" onMouseDown={onMouseDown} onMouseUp={onFlyUpEnd} onTouchStart={onMouseDown} onTouchEnd={onFlyUpEnd}>
+        <div className="scene" onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp} onTouchStart={this.onMouseDown} onTouchEnd={this.onFlyUpEnd}>
           <video autoPlay loop>
             <source src={tilmanPutzt} type="video/mp4"/>
             Your browser does not support the video tag.

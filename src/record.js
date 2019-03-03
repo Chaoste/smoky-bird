@@ -41,8 +41,15 @@ export function replay() {
     let { history } = record
     let count = 0
     let read = () => {
-        if (record.shouldStop || count >= history.length) {
-            record.shouldStop = false;
+        if (record.shouldStop && count < 30) {
+          record.shouldStop = false;
+        }
+        if (record.shouldStop) {
+          record.shouldStop = false;
+          render(history[history.length - 1]);
+          return
+        }
+        if (count >= history.length) {
             return
         }
         render(history[count])
@@ -56,7 +63,15 @@ export function reverse() {
     let { history } = record
     let count = 0
     let read = () => {
-        if (record.shouldStop || count >= history.length) {
+        if (record.shouldStop && count < 30) {
+          record.shouldStop = false;
+        }
+        if (record.shouldStop) {
+          record.shouldStop = false;
+          render(history[history.length - 1]);
+          return
+        }
+        if (count >= history.length) {
             record.shouldStop = false;
             render(history[history.length - 1])
             return

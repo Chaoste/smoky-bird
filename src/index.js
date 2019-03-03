@@ -13,7 +13,7 @@ const state = {
 
 const store = createStore(
 	state,
-	window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+	// window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 )
 
 const renderToDOM = (state) => {
@@ -46,6 +46,7 @@ let { PLAYING } = store.actions
 let requestID = null
 function playing() {
 	requestID = requestAnimationFrame(playing)
+	// eslint-disable-next-line new-cap
 	PLAYING()
 }
 function stopPlaying() {

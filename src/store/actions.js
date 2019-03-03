@@ -1,11 +1,9 @@
-/**
- * actions
- */
+/* eslint-disable no-use-before-define, new-cap */
 
-export let START_PLAY = (state) => {
-    let game = {...state.game }
+export const START_PLAY = (state) => {
+    const game = {...state.game }
     game.status = 'playing'
-    let nextState = {
+    const nextState = {
         ...state,
         ...state.initialState,
         game,
@@ -13,13 +11,13 @@ export let START_PLAY = (state) => {
     return FLY_UP(nextState)
 }
 
-export let FLY_UP = (state, force) => {
+export const FLY_UP = (state, force) => {
     // TODO: Remove, user can't pull if at the top
     if (state.bird.height >= state.game.range.max) {
         return state
     }
 
-    let bird = {...state.bird }
+    const bird = {...state.bird }
     bird.status = 'up'
     bird.force = force !== undefined ? force : 1
     bird.originalHeight = bird.height
@@ -31,8 +29,8 @@ export let FLY_UP = (state, force) => {
     }
 }
 
-export let PLAYING = (state) => {
-    let gameStatus = state.game.status
+export const PLAYING = (state) => {
+    const gameStatus = state.game.status
     if (gameStatus === 'over') {
         return state
     }
@@ -43,7 +41,7 @@ export let PLAYING = (state) => {
 }
 
 export const FLY_UP_END = (state) => {
-  let bird = {...state.bird }
+  const bird = {...state.bird }
   bird.status = 'down'
   bird.force = 0
   bird.originalHeight = bird.height
@@ -55,16 +53,16 @@ export const FLY_UP_END = (state) => {
   }
 }
 
-function flying(state) {
-    let bird = {...state.bird }
+const flying = (state) => {
+    const bird = {...state.bird }
 
-    let { timestamp, dropTime, force } = bird
-    let time = Date.now() - timestamp
+    const { timestamp, dropTime, force } = bird
+    const time = Date.now() - timestamp
 
     if (bird.status === 'up') {
         bird.height = bird.originalHeight + bird.flyHeight * force * time / 1000
     } else {
-        let shift = time * (state.game.range.max - state.game.range.min) / dropTime
+        const shift = time * (state.game.range.max - state.game.range.min) / dropTime
         bird.height = bird.originalHeight - shift
     }
 
@@ -74,14 +72,14 @@ function flying(state) {
     }
 }
 
-function sliding(state) {
-    let pipings = {...state.pipings }
-    let now = Date.now()
+const sliding = (state) => {
+    const pipings = {...state.pipings }
+    const now = Date.now()
     if (now - pipings.timestamp >= pipings.interval) {
-        let { game } = state
-        let heightRange = game.range.max - game.range.min
-        let shift = pipings.range.y.min + (pipings.range.y.max - pipings.range.y.min) * Math.random()
-        let piping = {
+        const { game } = state
+        const heightRange = game.range.max - game.range.min
+        const shift = pipings.range.y.min + (pipings.range.y.max - pipings.range.y.min) * Math.random()
+        const piping = {
             timestamp: now,
             x: pipings.range.x.min,
             upper: heightRange - shift - pipings.range.gap,
@@ -93,9 +91,9 @@ function sliding(state) {
         pipings.timestamp = now
     }
 
-    let { bird, game } = state
-    let collisitionRange = getCollisitionRange(bird.size.width, game.size.width, pipings.size.width)
-    let player = {...state.player}
+    const { bird, game } = state
+    const collisitionRange = getCollisitionRange(bird.size.width, game.size.width, pipings.size.width)
+    const player = {...state.player}
 
     pipings.list = pipings.list.map(piping => {
         piping = {...piping }
@@ -126,34 +124,33 @@ function sliding(state) {
     }
 }
 
-function getCollisitionRange(birdWidth, gameWidth, pipingWidth) {
-    let from = (gameWidth - birdWidth) / 2
-    let to = from + birdWidth / 2 + pipingWidth
+const getCollisitionRange = (birdWidth, gameWidth, pipingWidth) => {
+    const from = (gameWidth - birdWidth) / 2
+    const to = from + birdWidth / 2 + pipingWidth
     return { from, to }
 }
 
-function collisitionDetection(state) {
-    let { game, bird, pipings } = state
+const collisitionDetection = (state) => {
+    const { game, bird, pipings } = state
 
-    let collisitionRange = getCollisitionRange(bird.size.width, game.size.width, pipings.size.width)
+    const collisitionRange = getCollisitionRange(bird.size.width, game.size.width, pipings.size.width)
 
-    let list = pipings.list.filter(piping => {
+    const list = pipings.list.filter(piping => {
         return piping.x > collisitionRange.from && piping.x < collisitionRange.to
     })
 
-    let birdBottom = bird.height
-    let birdTop = bird.height + bird.size.height
+    const birdBottom = bird.height
+    const birdTop = bird.height + bird.size.height
 
     for (let i = 0, len = list.length; i < len; i += 1) {
-        let piping = list[i]
+        const piping = list[i]
         if (birdBottom < piping.bottom || birdTop > piping.top) {
-            game = {
-                ...game,
-                status: 'over'
-            }
             return {
                 ...state,
-                game,
+                game: {
+                    ...game,
+                    status: 'over'
+                },
             }
         }
     }
