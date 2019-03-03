@@ -3,87 +3,38 @@ import React from 'react'
 import Bird from './components/Bird'
 import Piping from './components/Piping'
 import Menu from './components/Menu'
-import throttle from 'lodash/throttle';
-import * as socketUtils from './utils/socket.js';
-import * as mathUtils from './utils/math.js';
+import HookahSocket from './hookah-socket/';
 
 import tilmanPutzt from  './images/tilman_seamless.mp4';
 
+// TODO: Automatically find out URI
 const URI = '192.168.178.118:80';
-const SIGNAL_WINDOW_SIZE = 50;
 
-const MAX_VAL = 50;
-const USE_SOCKET = true;
-const MIN_PRESSURE_RATIO = 0.15; // 10% of max required to trigger FLY_UP
+// Min percentage of "MAX_PRESSURE" required for flying up (default: 0.15)
+const MIN_PRESSURE_RATIO = 0.15;
 
 export default class App extends React.Component {
-  connection = undefined;
   state = {
-    lastSignals: [],
-    calibration: {
-      amount: 0,
-      mean: 0,
-      variance: 0,
-    }
+    socketURI: URI,
   }
+
   refAudio = React.createRef();
 
-  componentWillMount() {
-    if (USE_SOCKET) {
-      this.connection = socketUtils.setup(URI);
-      this.connection.onopen = () => {
-        console.info('WebSocket connected')
-        this.connection.send('PENIS'); // Send the message 'Ping' to the server
-      };
-      this.connection.onerror = (err) => {
-        console.error('WS Error', err)
-      }
-      this.connection.onmessage = (e) => {
-        this.receiveSignal(parseInt(e.data, 10));
-      };
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.connection)
-      this.connection.close();
-  }
-
-  receiveSignal = (value: number) => {
-    const lastSignals = [ ...this.state.lastSignals, value ].slice(-SIGNAL_WINDOW_SIZE);
-    this.setState({ lastSignals });
-    if (this.state.calibration.amount < SIGNAL_WINDOW_SIZE) {
-      if (lastSignals.length > 1 && lastSignals.length % 10 === 0) {
-        const calibrationUpdate = socketUtils.calibrate(lastSignals);
-        this.setState(calibrationUpdate);
-        if (lastSignals.length === SIGNAL_WINDOW_SIZE) {
-          console.info('Calibration finished', calibrationUpdate)
-        }
-      }
-    } else {
-      this.triggerInput(lastSignals);
-    }
-  }
-
-  triggerInput = throttle((signals) => {
+  // The user is pulling; the value will be between 0 and 1
+  onSignal = (value: number) => {
     const { FLY_UP, FLY_UP_END } = this.props.actions;
     const { isRecording } = this.props.record.getRecord();
     const isPlaying = this.props.state.game.status === 'playing';
-    if (isPlaying && !isRecording) {
-      const diff = mathUtils.calcMean(signals) - this.state.calibration.mean;
-      // this.state.calibration.variance
-      const factor = mathUtils.clip(diff / MAX_VAL, -1.5, 1.5);
-      if (factor > MIN_PRESSURE_RATIO) {
-        console.debug('UP', mathUtils.round(diff), mathUtils.round(factor))
-        FLY_UP(factor);
-      } else if (this.props.state.bird.status === 'up') {
-        console.debug('DOWN', mathUtils.round(diff), mathUtils.round(factor))
-        FLY_UP_END();
-      } else {
-        console.debug('NOOP', mathUtils.round(diff), mathUtils.round(factor))
-      }
+    if (!isPlaying || isRecording)
+      return;
+    if (value > MIN_PRESSURE_RATIO) {
+      // console.debug('UP', mathUtils.round(diff), mathUtils.round(value))
+      FLY_UP(value);
+    } else if (this.props.state.bird.status === 'up') {
+      // console.debug('DOWN', mathUtils.round(diff), mathUtils.round(value))
+      FLY_UP_END();
     }
-  }, 30)
+  }
 
   componentWillReceiveProps(newProps) {
     if (this.props.state.game.status !== 'over' &&
@@ -146,6 +97,7 @@ export default class App extends React.Component {
 
         </div>
         <div className="title title-2">Burrd</div>
+        <HookahSocket socketURI={this.state.socketURI} onSignal={this.onSignal}/>
       </div>
     )
   };
