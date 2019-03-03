@@ -4,10 +4,9 @@
   "private": true,
   "homepage": "/smocky-bird",
   "devDependencies": {
-    "react-scripts": "0.2.1"
+    "react-scripts": "^2.1.5"
   },
   "dependencies": {
-    "classnames": "^2.2.5",
     "react": "^16.8.3",
     "react-dom": "^16.8.3",
     "relite": "^1.0.0"
